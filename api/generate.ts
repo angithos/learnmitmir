@@ -8,6 +8,7 @@ export default async function handler(
   req: Request
 ) {
   try {
+    console.log("API KEY LENGTH:", process.env.OPENAI_API_KEY?.length);
     const completion = await client.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [

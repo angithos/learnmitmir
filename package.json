@@ -12,6 +12,7 @@
     "@types/node": "^16.18.126",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "@vercel/node": "^5.5.16",
     "firebase": "^12.7.0",
     "openai": "^6.15.0",
     "react": "^19.2.3",

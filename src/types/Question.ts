@@ -12,4 +12,3 @@ export interface Question {
     easeFactor: number;
     createdAt: Date;
   }
-  

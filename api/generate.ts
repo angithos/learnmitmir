@@ -1,45 +1,33 @@
-// import OpenAI from "openai";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
+import OpenAI from "openai";
 
-// const client = new OpenAI({
-//   apiKey: process.env.OPENAI_API_KEY,
-// });
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY!,
+});
 
-// export default async function handler(
-//   req: Request
-// ) {
-//   try {
-//     console.log("API KEY LENGTH:", process.env.OPENAI_API_KEY?.length);
-//     const completion = await client.chat.completions.create({
-//       model: "gpt-4o-mini",
-//       messages: [
-//         {
-//           role: "user",
-//           content: "Generate 3 simple german vocabulary questions",
-//         },
-//       ],
-//     });
+export default async function handler(
+  req: VercelRequest,
+  res: VercelResponse
+) {
+  try {
+    console.log("API HIT");
 
-//     return new Response(
-//       JSON.stringify({
-//         success: true,
-//         data: completion.choices[0].message.content,
-//       }),
-//       { status: 200 }
-//     );
-//   } catch (error) {
-//     console.error(error);
-//     return new Response(
-//       JSON.stringify({ success: false, error: "OpenAI call failed" }),
-//       { status: 500 }
-//     );
-//   }
-// }
+    const completion = await client.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "user",
+          content: "Generate 3 simple German vocabulary questions",
+        },
+      ],
+    });
 
-export default function handler() {
-    console.log("FUNCTION HIT");
-    return new Response(
-      JSON.stringify({ ok: true }),
-      { status: 200 }
-    );
+    res.status(200).json({
+      ok: true,
+      result: completion.choices[0].message.content,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ ok: false });
   }
-  
+}

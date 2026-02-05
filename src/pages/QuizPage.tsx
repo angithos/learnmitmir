@@ -1,101 +1,61 @@
-
-import { Timestamp, collection, doc, getDocs, limit, query, where } from "firebase/firestore";
+import {
+  Timestamp,
+  collection,
+  doc,
+  getDocs,
+  limit,
+  query,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Question } from "../types/Question";
 import { Rating, sm2 } from "../utils/sm2";
 import { auth, db } from "../firebase/firebaseconfig";
 import Quiz from "../components/Quiz";
 
+export default function QuizPage() {
+  const user = auth.currentUser;
+  const [questions, setQuestions] = useState<Question[]>([]);
 
+  const translationQuestions = questions.filter(
+    (q) => q.type === "translation",
+  );
+  const handleAnswer = async (question: Question, rating: Rating) => {
+    const { interval } = sm2(question, rating);
+    const nextReview = Timestamp.fromMillis(
+      Date.now() + interval * 24 * 60 * 60 * 1000,
+    );
+    console.log(
+      "Question ID:",
+      question.id,
+      "nextReview:",
+      nextReview.toMillis(),
+    );
+    if (user) {
+      const ref = doc(db, "users", user.uid, "questions", question.id);
+      console.log("Would update", ref.path, { interval, nextReview });
+    }
+  };
 
-export default function QuizPage({domain}:any){
-    const user = auth.currentUser;
-    const [questions, setQuestions] = useState<Question[]>([]);
-
-const [showquiz, setShowQuiz] = useState<boolean>(false)
-
-// useEffect(() => {
-//   debugger;
-// }, [questions])
-
-    const FetchQuestions = async () => {
-      if (!user) return [];
-      // debugger
+  useEffect(() => {
+    const loadQuestions = async () => {
+      if (!user) return;
       const q = query(
         collection(db, "users", user.uid, "questions"),
-        // where("nextReview", "<=", Timestamp.now()),
-        limit(20)
+        limit(20),
       );
-  
       const snapshot = await getDocs(q);
-  
-      const questions: Question[] = snapshot.docs.map((docSnap) => ({
-        id: docSnap.id,              // ✅ IMPORTANT
+      const qs: Question[] = snapshot.docs.map((docSnap) => ({
+        id: docSnap.id,
         ...(docSnap.data() as Omit<Question, "id">),
       }));
-      debugger
-      return questions;
+      setQuestions(qs);
     };
-    const translationQuestions = questions.filter(
-       
-        (q) => q.type == "translation"
-      );
+    loadQuestions();
+  }, [user]);
 
-
-      // const load = async () => {
-      //   const qs = await FetchQuestions();
-      //   setQuestions(qs);
-      // };
-      // load();
-
-        // new code added
-  const articleQuestions = questions.filter(
-    (q) => q.type === "article"
-  );
-    const handleAnswer = async (question: Question, rating: Rating) => {
-      const { interval, easeFactor, repetitions } = sm2(question, rating);
-  
-  
-      console.log("Question ID:", question.id);
-  
-      const nextReview = Timestamp.fromMillis(
-        Date.now() + interval * 24 * 60 * 60 * 1000
-      );
-  
-      if (user) {
-        const ref = doc(
-          db,
-          "users",
-          user.uid,
-          "questions",
-          question.id
-        );
-        // await updateDoc(ref, {
-        //   interval,
-        //   easeFactor,
-        //   repetitions,
-        //   nextReview,
-        // });
-      }
-    };
-
-
-      const loadQuestions = async () => {
-        const qs = await FetchQuestions();
-        setQuestions(qs);
-      };
-      loadQuestions();
- 
-
-    return <div>
-        {/* <input type="button" onClick={() => setShowQuiz(!showquiz)} value={showquiz ? "sTART QUIZ" : "END qUIZ"} /> */}
-
-       {/* if the activeState == transaltion{article component } otherwise if activeState == Article then run article component  */}
-       {
-        
-        <Quiz questions={translationQuestions} onAnswer={handleAnswer}/>
-       }  
-
-        
+  return (
+    <div>
+      <Quiz questions={translationQuestions} onAnswer={handleAnswer} />
     </div>
+  );
 }

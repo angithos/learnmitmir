@@ -1,27 +1,15 @@
-import { Question } from "../types/Question";
-import Quiz from "../components/Quiz";
 import { useEffect, useState } from "react";
-import { auth, db } from "../firebase/firebaseconfig";
-import { Timestamp, collection, getDocs, limit, query, where } from "firebase/firestore";
-import { doc, updateDoc } from "firebase/firestore";
-import { Rating, sm2 } from "../utils/sm2";
-import ArticleQuiz from "../components/fillintheblanks";
-
+import { auth } from "../firebase/firebaseconfig";
+import { useNavigate } from "react-router";
 
 export default function Dashboard() {
   const user = auth.currentUser;
-
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [showquiz, setShowQuiz] = useState<boolean>(false)
+  const navigate = useNavigate();
   const [activeType, setActiveType] = useState<
   "translation" | "article" | null
 >(null);
-  
-
   const generateQuestions = async () => {
-
     if (!user) return;
-
     const token = await user.getIdToken();
 
     const res = await fetch("/api/generate", {
@@ -39,101 +27,53 @@ export default function Dashboard() {
 
     const data = await res.json();
     console.log(data);
-
   };
+  const handleCardClick = (domain: string) => {
+    navigate("/quiz/" + domain)
+  }
+  return (
+    <div className="dashboard">
+      <header className="dashboard-header">
+        <h1 className="dashboard-title">Willkommen beim Dashboard</h1>
+        <p className="dashboard-subtitle">
+          Wählen Sie eine Übungsart, um mit dem Lernen zu beginnen
+        </p>
+      </header>
 
-  const FetchQuestions = async () => {
-    if (!user) return [];
+      <div className="dashboard-content">
+        <div className="button-group">
+          <button
+            className="btn btn-primary"
+            onClick={() => {
+              setActiveType("translation")
+              navigate("quiz/"+activeType)
+            }}
+          >
+            Übersetzungs-Quiz
+          </button>
 
-    const q = query(
-      collection(db, "users", user.uid, "questions"),
-      // where("nextReview", "<=", Timestamp.now()),
-      limit(10)
-    );
+          <button
+            className="btn btn-secondary"
+          // onClick={generateQuestions}
+          >
+            Neue Fragen generieren
+          </button>
 
-    const snapshot = await getDocs(q);
+          <button
+            className="btn btn-outline"
+            onClick={() => {
+              setActiveType("article")
+              navigate("quiz/"+activeType)
+            }}
+          >
+            Artikel-Quiz (bald verfügbar)
+          </button>
+        </div>
 
-    const questions: Question[] = snapshot.docs.map((docSnap) => ({
-      id: docSnap.id,              // ✅ IMPORTANT
-      ...(docSnap.data() as Omit<Question, "id">),
-    }));
-
-    return questions;
-  };
-
-  // new code added
-  const articleQuestions = questions.filter(
-    (q) => q.type === "article"
+        <div className="dashboard-stats">
+          {/* Add stats or progress indicators here */}
+        </div>
+      </div>
+    </div>
   );
-  
-  const translationQuestions = questions.filter(
-    (q) => q.type === "translation"
-  );
-  
-  const handleAnswer = async (question: Question, rating: Rating) => {
-    const { interval, easeFactor, repetitions } = sm2(question, rating);
-
-
-    console.log("Question ID:", question.id);
-
-    const nextReview = Timestamp.fromMillis(
-      Date.now() + interval * 24 * 60 * 60 * 1000
-    );
-
-    if (user) {
-      const ref = doc(
-        db,
-        "users",
-        user.uid,
-        "questions",
-        question.id
-      );
-      // await updateDoc(ref, {
-      //   interval,
-      //   easeFactor,
-      //   repetitions,
-      //   nextReview,
-      // });
-    }
-  };
-  const load = async () => {
-    const qs = await FetchQuestions();
-    setQuestions(qs);
-  };
-  load();
-
-  return <div>
-    <h1>Willkomen bei Dashbaord</h1>
-    {/* <input type="button" onClick={generateQuestions} value={"click"}/> */}
-
-
-    {/* <input type="button" onClick={()=>setShowArticleQuiz} value={"Show article "} />
-    <input type="button" onClick={() => setShowQuiz(!showquiz)} value={showquiz ? "sTART QUIZ" : "END qUIZ"} />
-    {
-      showquiz ? <div><h1>No Quiz today</h1></div> : <Quiz questions={questions} onAnswer={handleAnswer} />
-    } */}
-
-<button onClick={() => setActiveType("translation")}>
-  Translation Quiz
-</button>
-
-<button onClick={() => setActiveType("article")}>
-  Article Quiz
-</button>
-
-{activeType === "translation" && (
-  <Quiz
-    questions={translationQuestions}
-    onAnswer={handleAnswer}
-  />
-)}
-
-{activeType === "article" && (
-  <ArticleQuiz
-    questions={articleQuestions}
-    onAnswer={handleAnswer}
-  />
-)}
-
-  </div>
 }

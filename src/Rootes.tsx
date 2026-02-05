@@ -16,7 +16,7 @@ export default function Rootes() {
 
       <Route path="/quiz" element={<Outlet />}>
         <Route index element={<QuizPage />} />
-        <Route path="/article" element={<ArticlePage />} />
+        <Route path="article" element={<ArticlePage />} />
       </Route>
     </Routes>
   );

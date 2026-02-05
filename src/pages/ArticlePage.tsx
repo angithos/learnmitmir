@@ -1,10 +1,43 @@
-import React from "react";
+import { Question } from "../types/Question";
 
-export default function ArticlePage() {
+type Props = {
+  questions: Question[];
+  onAnswer: (
+    question: Question,
+    rating: "again" | "hard" | "good" | "easy"
+  ) => void;
+};
+
+export default function ArticlePage({ questions, onAnswer }: Props) {
+  if (questions.length === 0) {
+    return <p>No article questions due 🎉</p>;
+  }
+
+  const current = questions[0];
+
   return (
-    <div style={{ padding: 20 }}>
-      <h1>Article</h1>
-      <p>This is a placeholder Article page. Replace with real content.</p>
+    <div>
+      <h2>Choose the correct article</h2>
+
+      <h3 style={{ margin: "20px 0" }}>
+        {current.prompt}
+      </h3>
+
+      <div style={{ display: "flex", gap: "10px" }}>
+        {current.options?.map((option) => (
+          <button
+            key={option}
+            onClick={() =>
+              onAnswer(
+                current,
+                option === current.answer ? "good" : "again"
+              )
+            }
+          >
+            {option}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

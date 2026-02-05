@@ -5,9 +5,16 @@ import { useNavigate } from "react-router";
 export default function Dashboard() {
   const user = auth.currentUser;
   const navigate = useNavigate();
-  const [activeType, setActiveType] = useState<
-  "translation" | "article" | null
->(null);
+
+ const [handleClick,setHandleClick]=useState()
+
+
+//  async function handleCardClick(domain) {
+//   handleClick(domain);        // update topname in App
+//   await sendData()
+//   navigate("/quiz/" + domain);          // go to quiz page
+// }
+
   const generateQuestions = async () => {
     if (!user) return;
     const token = await user.getIdToken();
@@ -28,9 +35,7 @@ export default function Dashboard() {
     const data = await res.json();
     console.log(data);
   };
-  const handleCardClick = (domain: string) => {
-    navigate("/quiz/" + domain)
-  }
+  
   return (
     <div className="dashboard">
       <header className="dashboard-header">
@@ -45,8 +50,7 @@ export default function Dashboard() {
           <button
             className="btn btn-primary"
             onClick={() => {
-              setActiveType("translation")
-              navigate("quiz/"+activeType)
+              navigate("/quiz")
             }}
           >
             Übersetzungs-Quiz
@@ -62,8 +66,7 @@ export default function Dashboard() {
           <button
             className="btn btn-outline"
             onClick={() => {
-              setActiveType("article")
-              navigate("quiz/"+activeType)
+              navigate("/quiz/article")
             }}
           >
             Artikel-Quiz (bald verfügbar)

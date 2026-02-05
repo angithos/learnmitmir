@@ -1,24 +1,16 @@
-import {
-  Timestamp,
-  collection,
-  doc,
-  getDocs,
-  limit,
-  query,
-} from "firebase/firestore";
+import { Timestamp, doc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Question } from "../types/Question";
 import { Rating, sm2 } from "../utils/sm2";
 import { auth, db } from "../firebase/firebaseconfig";
+import { FetchQuestions, getQuestions } from "../utils/fetchQuestions";
 import Quiz from "../components/Quiz";
 
 export default function QuizPage() {
   const user = auth.currentUser;
   const [questions, setQuestions] = useState<Question[]>([]);
 
-  const translationQuestions = questions.filter(
-    (q) => q.type === "translation",
-  );
+  const translationQuestions = getQuestions("translation", questions);
   const handleAnswer = async (question: Question, rating: Rating) => {
     const { interval } = sm2(question, rating);
     const nextReview = Timestamp.fromMillis(
@@ -38,20 +30,11 @@ export default function QuizPage() {
 
   useEffect(() => {
     const loadQuestions = async () => {
-      if (!user) return;
-      const q = query(
-        collection(db, "users", user.uid, "questions"),
-        limit(20),
-      );
-      const snapshot = await getDocs(q);
-      const qs: Question[] = snapshot.docs.map((docSnap) => ({
-        id: docSnap.id,
-        ...(docSnap.data() as Omit<Question, "id">),
-      }));
+      const qs = await FetchQuestions();
       setQuestions(qs);
     };
     loadQuestions();
-  }, [user]);
+  }, []);
 
   return (
     <div>

@@ -1,43 +1,29 @@
+import React, { useEffect, useState } from "react";
 import { Question } from "../types/Question";
+import { FetchQuestions, getQuestions } from "../utils/fetchQuestions";
 
-type Props = {
-  questions: Question[];
-  onAnswer: (
-    question: Question,
-    rating: "again" | "hard" | "good" | "easy"
-  ) => void;
-};
+export default function ArticlePage() {
+  const [questions, setQuestions] = useState<Question[]>([]);
 
-export default function ArticlePage({ questions, onAnswer }: Props) {
-  if (questions.length === 0) {
-    return <p>No article questions due 🎉</p>;
-  }
+  useEffect(() => {
+    const load = async () => {
+      const qs = await FetchQuestions();
+      setQuestions(qs);
+    };
+    load();
+  }, []);
 
-  const current = questions[0];
+  const articleQuestions = getQuestions("article", questions);
 
   return (
-    <div>
-      <h2>Choose the correct article</h2>
-
-      <h3 style={{ margin: "20px 0" }}>
-        {current.prompt}
-      </h3>
-
-      <div style={{ display: "flex", gap: "10px" }}>
-        {current.options?.map((option) => (
-          <button
-            key={option}
-            onClick={() =>
-              onAnswer(
-                current,
-                option === current.answer ? "good" : "again"
-              )
-            }
-          >
-            {option}
-          </button>
+    <div style={{ padding: 20 }}>
+      <h1>Article</h1>
+      <p>Found {articleQuestions.length} article question(s).</p>
+      <ul>
+        {articleQuestions.map((q) => (
+          <li key={q.id}>{q.prompt}</li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }

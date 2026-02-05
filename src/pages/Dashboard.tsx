@@ -1,41 +1,31 @@
-import { useEffect, useState } from "react";
 import { auth } from "../firebase/firebaseconfig";
 import { useNavigate } from "react-router";
+import React from "react";
 
 export default function Dashboard() {
   const user = auth.currentUser;
   const navigate = useNavigate();
 
- const [handleClick,setHandleClick]=useState()
-
-
-//  async function handleCardClick(domain) {
-//   handleClick(domain);        // update topname in App
-//   await sendData()
-//   navigate("/quiz/" + domain);          // go to quiz page
-// }
-
-  const generateQuestions = async () => {
+  async function generateQuestions() {
     if (!user) return;
-    const token = await user.getIdToken();
+    try {
+      const token = await user.getIdToken();
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ language: "German", level: "A2" }),
+      });
+      if (!res.ok) throw new Error(`Status ${res.status}`);
+      const data = await res.json();
+      console.log("Generated questions:", data);
+    } catch (err) {
+      console.error("Failed to generate questions:", err);
+    }
+  }
 
-    const res = await fetch("/api/generate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        token,
-        language: "German",
-        level: "A2",
-      }),
-    });
-
-    const data = await res.json();
-    console.log(data);
-  };
-  
   return (
     <div className="dashboard">
       <header className="dashboard-header">
@@ -45,38 +35,28 @@ export default function Dashboard() {
         </p>
       </header>
 
-      <div className="dashboard-content">
+      <main className="dashboard-content">
         <div className="button-group">
-          <button
-            className="btn btn-primary"
-            onClick={() => {
-              navigate("/quiz")
-            }}
-          >
+          <button className="btn btn-primary" onClick={() => navigate("/quiz")}>
             Übersetzungs-Quiz
           </button>
 
-          <button
-            className="btn btn-secondary"
-          // onClick={generateQuestions}
-          >
+          <button className="btn btn-secondary" onClick={generateQuestions}>
             Neue Fragen generieren
           </button>
 
           <button
             className="btn btn-outline"
-            onClick={() => {
-              navigate("/quiz/article")
-            }}
+            onClick={() => navigate("/article")}
           >
-            Artikel-Quiz (bald verfügbar)
+            Artikel-Quiz
           </button>
         </div>
 
-        <div className="dashboard-stats">
-          {/* Add stats or progress indicators here */}
-        </div>
-      </div>
+        <section className="dashboard-stats" aria-hidden>
+          {/* Stats / progress can go here */}
+        </section>
+      </main>
     </div>
   );
 }

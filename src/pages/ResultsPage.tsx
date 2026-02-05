@@ -1,95 +1,123 @@
-// ResultsPage.tsx
 import { useNavigate } from "react-router";
+import React from "react";
+import { Rating } from "../utils/sm2";
 
-interface AnswerResult {
+export interface AnswerResult {
   question: string;
   userAnswer: string;
   correctAnswer: string;
   isCorrect: boolean;
-  rating: "again" | "hard" | "good" | "easy";
+  rating: Rating;
 }
 
 interface ResultsPageProps {
   answers: AnswerResult[];
 }
 
-export default function ResultsPage({ answers }: ResultsPageProps) {
+function formatPercentage(correct: number, total: number) {
+  if (total === 0) return 0;
+  return Math.round((correct / total) * 100);
+}
+
+function AnswerCard({
+  answer,
+  index,
+}: Readonly<{
+  answer: AnswerResult;
+  index: number;
+}>) {
+  const key = answer.question || String(index);
+  return (
+    <div
+      className={`answer-card ${answer.isCorrect ? "correct" : "incorrect"}`}
+      key={key}
+    >
+      <div className="answer-question">
+        <strong className="question-number">Q{index + 1}:</strong>
+        <span className="question-text">{answer.question}</span>
+      </div>
+
+      <div className="answer-comparison">
+        <div>
+          <div className="answer-label">Your Answer</div>
+          <div className="answer-value">
+            {answer.userAnswer || "(No answer)"}
+          </div>
+        </div>
+
+        <div>
+          <div className="answer-label">Correct Answer</div>
+          <div className="answer-value">{answer.correctAnswer}</div>
+        </div>
+      </div>
+
+      <div className="answer-status">
+        <span
+          className={`status-badge ${answer.isCorrect ? "status-correct" : "status-incorrect"}`}
+        >
+          {answer.isCorrect ? "✓ Correct" : "✗ Incorrect"}
+        </span>
+        <span className={`rating-badge rating-${answer.rating}`}>
+          {answer.rating.toUpperCase()}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+export default function ResultsPage({ answers }: Readonly<ResultsPageProps>) {
   const navigate = useNavigate();
-  
-  const correctCount = answers.filter(a => a.isCorrect).length;
+
+  const correctCount = answers.filter((a) => a.isCorrect).length;
   const totalCount = answers.length;
-  const percentage = totalCount > 0 ? Math.round((correctCount / totalCount) * 100) : 0;
+  const percentage = formatPercentage(correctCount, totalCount);
 
   return (
     <div className="results-container">
       <div className="results-card">
-        <div className="results-header">
+        <header className="results-header">
           <h1 className="results-title">Quiz Results</h1>
+
           <div className="results-score">
             <div className="score-circle">
               <span className="score-percentage">{percentage}%</span>
               <span className="score-text">Score</span>
             </div>
             <div className="score-breakdown">
-              <p>{correctCount} out of {totalCount} correct</p>
+              <p>
+                {correctCount} out of {totalCount} correct
+              </p>
             </div>
           </div>
-        </div>
+        </header>
 
-        <div className="results-details">
+        <section className="results-details">
           <h2 className="details-title">Detailed Results</h2>
-          
           <div className="answers-list">
-            {answers.map((answer, index) => (
-              <div 
-                key={index} 
-                className={`answer-card ${answer.isCorrect ? 'correct' : 'incorrect'}`}
-              >
-                <div className="answer-question">
-                  <span className="question-number">Q{index + 1}:</span>
-                  <span className="question-text">{answer.question}</span>
-                </div>
-                
-                <div className="answer-comparison">
-                  <div className="user-answer">
-                    <span className="answer-label">Your Answer:</span>
-                    <span className="answer-value">{answer.userAnswer || "(No answer)"}</span>
-                  </div>
-                  
-                  <div className="correct-answer">
-                    <span className="answer-label">Correct Answer:</span>
-                    <span className="answer-value">{answer.correctAnswer}</span>
-                  </div>
-                </div>
-                
-                <div className="answer-status">
-                  <span className={`status-badge ${answer.isCorrect ? 'status-correct' : 'status-incorrect'}`}>
-                    {answer.isCorrect ? "✓ Correct" : "✗ Incorrect"}
-                  </span>
-                  <span className={`rating-badge rating-${answer.rating}`}>
-                    {answer.rating.toUpperCase()}
-                  </span>
-                </div>
-              </div>
+            {answers.map((answer, i) => (
+              <AnswerCard
+                answer={answer}
+                index={i}
+                key={answer.question ?? i}
+              />
             ))}
           </div>
-        </div>
+        </section>
 
-        <div className="results-actions">
-          <button 
+        <footer className="results-actions">
+          <button
             className="btn btn-primary"
             onClick={() => navigate("/dashboard")}
           >
             Back to Dashboard
           </button>
-          
-          <button 
+          <button
             className="btn btn-secondary"
-            onClick={() => window.location.reload()}
+            onClick={() => globalThis.location.reload()}
           >
             Try Again
           </button>
-        </div>
+        </footer>
       </div>
     </div>
   );

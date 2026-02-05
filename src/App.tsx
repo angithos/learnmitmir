@@ -7,8 +7,8 @@ import Dashboard from './pages/Dashboard';
 import QuizPage from './pages/QuizPage';
 import "./styles/styles.css";
 import { useState } from 'react';
+import ArticleQuiz from './components/fillintheblanks';
 function App() {
-  const [topname, setTopname] = useState("")
 
   return <div>
     <BrowserRouter>
@@ -31,7 +31,7 @@ function App() {
         <Route path="/signin" element={<SignIn/>}/>
         <Route path="/dashboard" element={<Dashboard/>} />
         {/* <Route path="/quiz" element={<QuizPage />}/> */}
-        <Route path="/quiz:topname" element={<QuizPage domain={topname} />}/>
+        <Route path="/quiz:topname" element={<QuizPage  />}/>
     </Routes>
     </main>
     </BrowserRouter>

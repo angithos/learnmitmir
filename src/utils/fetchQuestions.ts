@@ -1,28 +1,67 @@
-import { collection, getDocs, limit, query } from "firebase/firestore";
-import { auth, db } from "../firebase/firebaseconfig";
-import { Question, QuestionStyle } from "../types/Question";
+import { collection, getDocs, query, where, Timestamp } from "firebase/firestore";
+import { db, auth } from "../firebase/firebaseconfig";
+import { MOCK_QUESTIONS } from "../pages/mockdata";
+import { Question } from "../types/Question";
+import { SM2State } from "./sm2"; // Or wherever your SM2State interface lives
 
-export const FetchQuestions = async () => {
+// We create a new type that holds the question data AND its current SM2 history
+export interface ReviewQuestion extends Question {
+  sm2State: SM2State;
+}
+
+/**
+ * Fetches all items from Firestore that are due for review and matches them 
+ * with their question text data.
+ * 
+ * @param isTestingMode - If true, fetches items due up to 48 hours from now so you can test instantly.
+ */
+export async function fetchDueReviews(isTestingMode = false): Promise<ReviewQuestion[]> {
   const user = auth.currentUser;
-  if (!user) return [];
-  const q = query(
-    collection(db, "users", user.uid, "questions"),
-    // where("nextReview", "<=", Timestamp.now()),
-    limit(20),
-  );
+  if (!user) {
+    console.error("No authenticated user found.");
+    return [];
+  }
 
-  const snapshot = await getDocs(q);
+  // Determine the cutoff timestamp
+  let cutoffTime = new Date();
+  if (isTestingMode) {
+    // Look ahead 2 days so questions scheduled for "tomorrow" show up immediately for testing
+    cutoffTime.setDate(cutoffTime.getDate() + 2);
+  }
 
-  const questions: Question[] = snapshot.docs.map((docSnap) => ({
-    id: docSnap.id,
-    ...(docSnap.data() as Omit<Question, "id">),
-  }));
-  return questions;
-};
+  try {
+    // 1. Query the nested progress collection
+    const progressRef = collection(db, "users", user.uid, "progress");
+    const q = query(progressRef, where("nextReview", "<=", Timestamp.fromDate(cutoffTime)));
+    
+    const querySnapshot = await getDocs(q);
+    const dueQuestions: ReviewQuestion[] = [];
 
-export const getQuestions = (
-  questionType: QuestionStyle,
-  questions: Question[],
-) => {
-  return questions.filter((q) => q.type === questionType);
-};
+    // Flatten all mock categories into a single array for quick ID lookup
+    const allMockQuestions = Object.values(MOCK_QUESTIONS).flat();
+
+    // 2. Loop through tracking logs and match them with real question content
+    querySnapshot.forEach((docSnap) => {
+      const progressData = docSnap.data();
+      
+      // Find the text prompt and answer details using the logged questionId
+      const matchedQuestion = allMockQuestions.find(q => q.id === progressData.questionId);
+
+      if (matchedQuestion) {
+        dueQuestions.push({
+          ...matchedQuestion,
+          sm2State: {
+            interval: progressData.interval || 0,
+            easeFactor: progressData.easeFactor || 2.5,
+            repetitions: progressData.repetitions || 0,
+          }
+        });
+      }
+    });
+
+    return dueQuestions;
+  } catch (error) {
+    console.error("Error fetching due reviews:", error);
+    return [];
+  }
+}

@@ -1,20 +1,30 @@
-import { Timestamp } from "firebase/firestore";
 
-export type QuestionStyle = "translation" | "article" | "mcq";
-export type Level = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
+
+import { Timestamp } from "firebase/firestore";
 
 export interface Question {
   id: string;
-  userId: string;
-  language: string; // e.g. "German"
-  level: Level;
-  type: QuestionStyle;
+
+  topic: string;
+  subtopic: string;
+
+  conceptId: string;
+
+  type:
+  | "mcq"
+  | "fill_blank"
+  | "typing"
+
   prompt: string;
   answer: string;
-  options?: string[]; // for MCQ
-  nextReview: Timestamp;
-  interval: number;
-  easeFactor: number;
-  repetitions: number;
+
+  options?: string[];
+
+  difficulty?: number;
+
+  explanation?: string;
+
   createdAt: Timestamp;
+
+  tags?: string[]
 }

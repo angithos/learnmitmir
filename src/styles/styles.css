@@ -33,7 +33,7 @@ body {
 }
 
 .dashboard-header {
-  text-align: center;
+  text-align: left;
   margin-bottom: 3rem;
   padding: 1rem;
 }
@@ -47,14 +47,15 @@ body {
 }
 
 .dashboard-subtitle {
+  text-align: left;
   font-size: 1.1rem;
   color: #6b7280;
   max-width: 600px;
-  margin: 0 auto;
+  margin: 0 24;
 }
 
 .dashboard-content {
-  max-width: 800px;
+  max-width: 2400px;
   margin: 0 auto;
   padding: 2rem;
   background: white;

@@ -5,6 +5,7 @@ import SignIn from "./auth/Signin";
 import Dashboard from "./pages/Dashboard";
 import QuestionRenderer from "./pages/QuestionRenderer";
 import Vocabulary from "./pages/Vocabulary";
+import GrammarPage from "./pages/GrammarPage";
 // import QuizPage from "./pages/QuizPage";
 // import ArticlePage from "./pages/ArticlePage";
 // import ArticleQuiz from "./components/FillintheblanksTest";
@@ -18,6 +19,7 @@ export default function Rootes() {
       <Route path="/signin" element={<SignIn />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/vocabulary" element={<Vocabulary />} />
+      <Route path="/grammarPage" element={<GrammarPage />} />
       {/* <Route path="/quiz" element={<Outlet />}> */}
       <Route path="/question_renderer" element={<QuestionRenderer/>}/>
       {/* </Route> */}

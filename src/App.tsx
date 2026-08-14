@@ -10,7 +10,7 @@ function App() {
         <nav className="nav-bar">
           <div className="nav-content">
             <Link to="/" className="nav-logo">
-              LangLearn
+              Learnmitmir
             </Link>
             <div className="nav-links">
               <Link to="/dashboard" className="nav-link">

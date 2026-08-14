@@ -1,116 +1,219 @@
-import { auth } from "../firebase/firebaseconfig";
 import { Link, useNavigate } from "react-router";
-import React, { useState } from "react";
+import { auth } from "../firebase/firebaseconfig";
+import { useState } from "react";
 import { fetchDueReviews } from "../utils/fetchQuestions";
-import GrammarSandboxInput from "./GrammarInputField";
+import "../styles/Dashboard.css";
 
 export default function Dashboard() {
   const user = auth.currentUser;
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  const handleAISandboxCall = async (selectedTopic: string) => {
-    if (!user) {
-      alert("Please log in to generate sandbox questions.");
-      return;
-    }
-
-    try {
-      // 1. Fetch the user's Auth Token to pass through the Vercel middleware security check
-      const token = await user.getIdToken();
-
-      // 2. Send the topic query string straight to your updated Vercel serverless function
-      const res = await fetch("/api/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ topic: selectedTopic }),
-      });
-
-      if (!res.ok) {
-        throw new Error(`Server returned status: ${res.status}`);
-      }
-
-      const result = await res.json();
-      debugger
-
-      // 3. Check if we received back the array of questions successfully
-      if (result.data.length > 0) {
-        // 4. Pass the array of AI questions directly down to your renderer view state!
-        navigate("/question_renderer", { state: { customQuestions: result.data } });
-      } else {
-        alert("The AI couldn't formulate questions for that topic. Try a different grammar keyword!");
-      }
-    } catch (err) {
-      console.error("Failed to generate sandbox questions:", err);
-      alert("Something went wrong connecting to the generation server.");
-    }
-  };
-
   const startReviewDeck = async () => {
     setLoading(true);
-    
-    // Set parameter to TRUE for testing, so you can see tomorrow's items today!
-    const dueItems = await fetchDueReviews(true); 
-    
-    setLoading(false);
 
-    if (dueItems.length === 0) {
-      alert("No reviews due right now! Great job.");
-      return;
+    try {
+      // Temporary TRUE for testing.
+      // Change to FALSE when the real review logic is ready.
+      const dueItems = await fetchDueReviews(true);
+
+      if (dueItems.length === 0) {
+        alert("You're all caught up! No reviews are due right now.");
+        return;
+      }
+
+      navigate("/question_renderer", {
+        state: { customQuestions: dueItems },
+      });
+    } catch (error) {
+      console.error("Failed to load review deck:", error);
+      alert("Something went wrong while loading your reviews.");
+    } finally {
+      setLoading(false);
     }
-
-    // Navigate to your quiz view and pass the custom review deck as state
-    navigate("/question_renderer", { state: { customQuestions: dueItems } });
   };
-  const handleVocabulary = () =>{
-
-  }
 
   return (
-    <div className="dashboard">
-      <header className="dashboard-header">
-        <h1 className="dashboard-title">Willkommen beim Dashboard</h1>
-        <p className="dashboard-subtitle">
-          Wählen Sie eine Übungsart, um mit dem Lernen zu beginnen
-        </p>
-      </header>
+    <main className="dashboard">
+      <div className="dashboard-container">
 
-      <main className="dashboard-content">
-        <div className="button-group">
-          
-          <button 
-            className="btn btn-primary" 
-            onClick={startReviewDeck} 
+        {/* Header */}
+
+        <header className="dashboard-header">
+          <h1 className="dashboard-title">
+            Guten Morgen, {user?.displayName || "Angith"} 👋
+          </h1>
+
+          <p className="dashboard-subtitle">
+            Welcome back! Ready to learn some German?
+          </p>
+        </header>
+
+
+        {/* Review */}
+
+        <section className="review-section">
+
+          <div className="review-content">
+            <div className="review-icon">
+              🔄
+            </div>
+
+            <div>
+              <p className="section-label">
+                REVIEW
+              </p>
+
+              <h2>
+                Keep your learning going
+              </h2>
+
+              <p className="review-description">
+                12 questions are waiting for you.
+              </p>
+            </div>
+          </div>
+
+          <button
+            className="review-button"
+            onClick={startReviewDeck}
             disabled={loading}
-            style={{ marginBottom: "20px", display: "block", background: "#9b59b6", color: "white" }}
           >
-            
-            {loading ? "Loading Deck..." : "Review Due Items "}
+            {loading ? "Loading..." : "Start Review →"}
           </button>
-          <button 
-            className="btn btn-primary" 
-            onClick={startReviewDeck} 
-            disabled={loading}
-            style={{ marginBottom: "20px", display: "block", background: "#9b59b6", color: "white" }}
 
-          >
-{"Generate Quiz"}
-</button>
-<Link to="/vocabulary" className="btn btn-primary" style={{ marginBottom: "20px", display: "block", background: "#9b59b6", color: "white" }}>
-  Practice vocabulary
-</Link>
-          {/* Integrated AI text input sandbox bar */}
-          {/* <GrammarSandboxInput onGenerate={handleAISandboxCall}/> */}
-        
-        </div>
-
-        <section className="dashboard-stats" aria-hidden>
-          {/* Stats / progress can go here */}
         </section>
-      </main>
-    </div>
+
+
+        {/* Practice */}
+
+        <section className="practice-section">
+
+          <div className="section-heading">
+            <h2>Practice</h2>
+
+            <p>
+              Choose how you want to practice.
+            </p>
+          </div>
+
+
+          <div className="practice-grid">
+
+            {/* Grammar */}
+
+            <article className="practice-card">
+
+              <div className="practice-card-icon grammar-icon">
+                🧠
+              </div>
+
+              <div className="practice-card-content">
+                <h3>
+                  Practice German
+                </h3>
+
+                <p>
+                  Practice grammar with custom AI quizzes
+                  or random questions.
+                </p>
+              </div>
+
+              <button
+                className="practice-button"
+                onClick={() => navigate("/grammarPage")}
+              >
+                Start →
+              </button>
+
+            </article>
+
+
+            {/* Vocabulary */}
+
+            <article className="practice-card">
+
+              <div className="practice-card-icon vocabulary-icon">
+                📚
+              </div>
+
+              <div className="practice-card-content">
+                <h3>
+                  Vocabulary
+                </h3>
+
+                <p>
+                  Add new German words or practice
+                  vocabulary you've already learned.
+                </p>
+              </div>
+
+              <Link
+                to="/vocabulary"
+                className="practice-button"
+              >
+                Open →
+              </Link>
+
+            </article>
+
+          </div>
+
+        </section>
+
+
+        {/* Progress */}
+
+        <section className="progress-section">
+
+          <div className="section-heading">
+            <h2>Your Progress</h2>
+
+            <p>
+              Keep track of your learning journey.
+            </p>
+          </div>
+
+
+          <div className="progress-grid">
+
+            <div className="progress-card">
+              <span className="progress-value">
+                42
+              </span>
+
+              <span className="progress-label">
+                Words learned
+              </span>
+            </div>
+
+
+            <div className="progress-card">
+              <span className="progress-value">
+                128
+              </span>
+
+              <span className="progress-label">
+                Reviews completed
+              </span>
+            </div>
+
+
+            <div className="progress-card">
+              <span className="progress-value">
+                23
+              </span>
+
+              <span className="progress-label">
+                Quizzes completed
+              </span>
+            </div>
+
+          </div>
+
+        </section>
+
+      </div>
+    </main>
   );
 }

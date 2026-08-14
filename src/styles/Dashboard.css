@@ -1,0 +1,405 @@
+* {
+    box-sizing: border-box;
+  }
+  
+  body {
+    margin: 0;
+    background: linear-gradient(
+      135deg,
+      #f3f4f6 0%,
+      #e0f2fe 100%
+    );
+  
+    color: #1f2937;
+  
+    font-family:
+      "Inter",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      Oxygen,
+      Ubuntu,
+      sans-serif;
+  
+    line-height: 1.5;
+  }
+  
+  
+  /* ==========================
+     Dashboard
+  ========================== */
+  
+  .dashboard {
+    min-height: 100vh;
+    padding: 48px 24px;
+  }
+  
+  .dashboard-container {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  
+  
+  /* ==========================
+     Header
+  ========================== */
+  
+  .dashboard-header {
+    margin-bottom: 40px;
+  }
+  
+  .dashboard-title {
+    margin: 0 0 8px;
+  
+    font-size: 2.4rem;
+    font-weight: 800;
+    line-height: 1.2;
+  
+    color: #111827;
+  }
+  
+  .dashboard-subtitle {
+    margin: 0;
+  
+    font-size: 1.05rem;
+    color: #6b7280;
+  }
+  
+  
+  /* ==========================
+     Review Section
+  ========================== */
+  
+  .review-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  
+    padding: 28px;
+  
+    margin-bottom: 48px;
+  
+    border-radius: 18px;
+  
+    background: #ffffff;
+  
+    border: 1px solid #e5e7eb;
+  
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.06);
+  }
+  
+  .review-content {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  
+  .review-icon {
+    width: 52px;
+    height: 52px;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    flex-shrink: 0;
+  
+    border-radius: 14px;
+  
+    background: #f3e8ff;
+  
+    font-size: 1.5rem;
+  }
+  
+  .section-label {
+    margin: 0 0 3px;
+  
+    font-size: 0.72rem;
+    font-weight: 700;
+  
+    color: #9b59b6;
+  
+    letter-spacing: 0.08em;
+  }
+  
+  .review-content h2 {
+    margin: 0 0 4px;
+  
+    font-size: 1.25rem;
+    font-weight: 700;
+  
+    color: #111827;
+  }
+  
+  .review-description {
+    margin: 0;
+  
+    color: #6b7280;
+  }
+  
+  .review-button {
+    flex-shrink: 0;
+  
+    padding: 12px 20px;
+  
+    border: none;
+    border-radius: 9px;
+  
+    background: #9b59b6;
+    color: white;
+  
+    font-size: 0.95rem;
+    font-weight: 600;
+  
+    cursor: pointer;
+  
+    transition:
+      background 0.2s ease,
+      transform 0.2s ease;
+  }
+  
+  .review-button:hover:not(:disabled) {
+    background: #8845a5;
+    transform: translateY(-1px);
+  }
+  
+  .review-button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+  
+  
+  /* ==========================
+     Section Heading
+  ========================== */
+  
+  .section-heading {
+    margin-bottom: 20px;
+  }
+  
+  .section-heading h2 {
+    margin: 0 0 5px;
+  
+    font-size: 1.45rem;
+    font-weight: 700;
+  
+    color: #111827;
+  }
+  
+  .section-heading p {
+    margin: 0;
+  
+    color: #6b7280;
+  }
+  
+  
+  /* ==========================
+     Practice
+  ========================== */
+  
+  .practice-section {
+    margin-bottom: 48px;
+  }
+  
+  .practice-grid {
+    display: grid;
+  
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  
+    gap: 20px;
+  }
+  
+  .practice-card {
+    display: flex;
+    flex-direction: column;
+  
+    min-height: 250px;
+  
+    padding: 26px;
+  
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+  
+    background: #ffffff;
+  
+    box-shadow:
+      0 6px 20px rgba(0, 0, 0, 0.05);
+  
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+  
+  .practice-card:hover {
+    transform: translateY(-3px);
+  
+    box-shadow:
+      0 10px 26px rgba(0, 0, 0, 0.08);
+  }
+  
+  
+  /* Card icon */
+  
+  .practice-card-icon {
+    width: 48px;
+    height: 48px;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    margin-bottom: 20px;
+  
+    border-radius: 13px;
+  
+    font-size: 1.4rem;
+  }
+  
+  .grammar-icon {
+    background: #ede9fe;
+  }
+  
+  .vocabulary-icon {
+    background: #e0f2fe;
+  }
+  
+  
+  /* Card content */
+  
+  .practice-card-content {
+    flex: 1;
+  }
+  
+  .practice-card-content h3 {
+    margin: 0 0 8px;
+  
+    font-size: 1.2rem;
+    font-weight: 700;
+  
+    color: #111827;
+  }
+  
+  .practice-card-content p {
+    max-width: 360px;
+  
+    margin: 0;
+  
+    color: #6b7280;
+  
+    line-height: 1.55;
+  }
+  
+  
+  /* Practice button */
+  
+  .practice-button {
+    align-self: flex-start;
+  
+    margin-top: 24px;
+  
+    padding: 10px 17px;
+  
+    border: none;
+    border-radius: 8px;
+  
+    background: #9b59b6;
+    color: white;
+  
+    font-size: 0.9rem;
+    font-weight: 600;
+  
+    text-decoration: none;
+  
+    cursor: pointer;
+  
+    transition:
+      background 0.2s ease,
+      transform 0.2s ease;
+  }
+  
+  .practice-button:hover {
+    background: #8845a5;
+    transform: translateY(-1px);
+  }
+  
+  
+  /* ==========================
+     Progress
+  ========================== */
+  
+  .progress-section {
+    margin-bottom: 30px;
+  }
+  
+  .progress-grid {
+    display: grid;
+  
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  
+    gap: 16px;
+  }
+  
+  .progress-card {
+    display: flex;
+    flex-direction: column;
+  
+    padding: 22px;
+  
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+  
+    background: rgba(255, 255, 255, 0.8);
+  }
+  
+  .progress-value {
+    margin-bottom: 3px;
+  
+    font-size: 1.7rem;
+    font-weight: 750;
+  
+    color: #111827;
+  }
+  
+  .progress-label {
+    font-size: 0.85rem;
+  
+    color: #6b7280;
+  }
+  
+  
+  /* ==========================
+     Responsive
+  ========================== */
+  
+  @media (max-width: 700px) {
+  
+    .dashboard {
+      padding: 32px 16px;
+    }
+  
+    .dashboard-title {
+      font-size: 2rem;
+    }
+  
+    .review-section {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  
+    .review-button {
+      width: 100%;
+    }
+  
+    .practice-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .progress-grid {
+      grid-template-columns: 1fr;
+    }
+  }

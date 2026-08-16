@@ -9,7 +9,7 @@ import { getAuth } from "firebase/auth";
 const firebaseConfig = {
   apiKey: "AIzaSyD496Jp5-egwkHlbXCm8JDISkC-jG3iPKg",
   authDomain: "learnmitmir-6f6e2.firebaseapp.com",
-  projectId: process.env.FIREBASE_PROJECT_ID,
+  projectId: "learnmitmir-6f6e2",
   storageBucket: "learnmitmir-6f6e2.firebasestorage.app",
   messagingSenderId: "944879044780",
   appId: "1:944879044780:web:6c796ca58ef5199af67709"

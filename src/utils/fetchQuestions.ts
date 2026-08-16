@@ -15,6 +15,7 @@ export interface ReviewQuestion extends Question {
  * 
  * @param isTestingMode - If true, fetches items due up to 48 hours from now so you can test instantly.
  */
+
 export async function fetchDueReviews(isTestingMode = false): Promise<ReviewQuestion[]> {
   const user = auth.currentUser;
   if (!user) {
@@ -64,4 +65,40 @@ export async function fetchDueReviews(isTestingMode = false): Promise<ReviewQues
     console.error("Error fetching due reviews:", error);
     return [];
   }
+}
+
+export async function fetchQuizQuestions(): Promise<Question[] | null> {
+  const user = auth.currentUser;
+
+  if (user === null) {
+      console.log("No authenticated user");
+      return null;
+  }
+
+  console.log("User ID:", user.uid);
+  console.log("Firebase project:", db.app.options.projectId);
+  const questionsRef = collection(
+      db,
+      "users",
+      user.uid,
+      "questions"
+  );
+
+  const querySnapshot = await getDocs(questionsRef);
+
+  console.log("Number of documents:", querySnapshot.size);
+
+  querySnapshot.forEach((docSnap) => {
+      console.log("Question ID:", docSnap.id);
+      console.log("Question data:", docSnap.data());
+  });
+
+  const questions: Question[] = [];
+
+  querySnapshot.forEach((docSnap) => {
+      const questionData = docSnap.data() as Question;
+      questions.push(questionData);
+  });
+
+  return questions.slice(0, 10);
 }

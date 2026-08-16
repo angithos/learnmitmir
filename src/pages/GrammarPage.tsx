@@ -2,11 +2,14 @@ import { useNavigate } from "react-router";
 import { auth } from "../firebase/firebaseconfig";
 import GrammarSandboxInput from "./GrammarInputField";
 import "../styles/GrammarPage.css";
+import { fetchQuizQuestions } from "../utils/fetchQuestions";
+import { Question } from "../types/Question";
+import { useState } from "react";
 
 export default function GrammarPage() {
   const user = auth.currentUser;
   const navigate = useNavigate();
-
+  const [questions,setQuestions]=useState<Question[]>([])
   const handleAISandboxCall = async (selectedTopic: string) => {
     if (!user) {
       alert("Please log in to generate sandbox questions.");
@@ -46,8 +49,22 @@ export default function GrammarPage() {
     }
   };
 
-  const handleRandomQuiz = () => {
+  async function handleRandomQuiz(){
     // Random grammar quiz logic will be implemented later.
+    try {
+      const questions_neu=await fetchQuizQuestions();
+      if (questions_neu === null) {
+          console.log("No authenticated user");
+          return;
+      }
+      setQuestions(questions_neu)
+      console.log(questions)
+      navigate("/question_renderer", {
+        state: { customQuestions: questions },
+      });
+    } catch (error) {
+      console.error("Failed to fetch quiz questions:", error);
+  }
   };
 
   return (

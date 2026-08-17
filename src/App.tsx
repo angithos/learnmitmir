@@ -12,15 +12,15 @@ function App() {
             <Link to="/" className="nav-logo">
               Learnmitmir
             </Link>
-            <div className="nav-links">
+            {/* <div className="nav-links">
               <Link to="/dashboard" className="nav-link">
                 Dashboard
               </Link>
               <Link to="/quiz" className="nav-link">
                 Quiz
               </Link>
-              <div className="nav-user">{/* User info here */}</div>
-            </div>
+              <div className="nav-user"></div>
+            </div> */}
           </div>
         </nav>
         <main className="main-container">

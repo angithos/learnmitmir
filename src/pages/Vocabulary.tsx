@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { db, auth } from "../firebase/firebaseconfig";
+
 
 type Gender = "der" | "die" | "das";
 

@@ -3,7 +3,7 @@ import { EvaluationResultType } from "./evaluation";
 export function mapToRating(
   result: EvaluationResultType
 ): "again" | "hard" | "good" | "easy" {
-  const { isCorrect, accuracy, timeTaken, expectedTime } = result;
+  const { isCorrect, timeTaken, expectedTime } = result;
 
   if (!isCorrect) return "again";
 

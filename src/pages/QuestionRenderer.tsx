@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Timestamp } from "firebase/firestore";
 
 import { Question } from "../types/Question";
 import { EvaluationResultType } from "../utils/evaluation";

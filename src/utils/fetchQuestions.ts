@@ -75,8 +75,6 @@ export async function fetchQuizQuestions(): Promise<Question[] | null> {
       return null;
   }
 
-  console.log("User ID:", user.uid);
-  console.log("Firebase project:", db.app.options.projectId);
   const questionsRef = collection(
       db,
       "users",
@@ -88,10 +86,7 @@ export async function fetchQuizQuestions(): Promise<Question[] | null> {
 
   console.log("Number of documents:", querySnapshot.size);
 
-  querySnapshot.forEach((docSnap) => {
-      console.log("Question ID:", docSnap.id);
-      console.log("Question data:", docSnap.data());
-  });
+
 
   const questions: Question[] = [];
 

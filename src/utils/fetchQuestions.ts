@@ -94,6 +94,6 @@ export async function fetchQuizQuestions(): Promise<Question[] | null> {
       const questionData = docSnap.data() as Question;
       questions.push(questionData);
   });
-
+  console.log(questions)
   return questions.slice(0, 10);
 }

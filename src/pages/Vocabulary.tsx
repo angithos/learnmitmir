@@ -257,11 +257,3 @@ export default function Vocabulary() {
     );
 }
 
-{/* <input
-value={word}
-onChange={(e) => setWord(e.target.value)}
-/>
-
-<button onClick={() => handleSearch(word)}>
-Add a new word
-</button> */}

@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { useNavigate } from "react-router";
 
 
 type Gender = "der" | "die" | "das";
@@ -34,7 +35,7 @@ interface VocabData {
 export default function Vocabulary() {
     const [word, setWord] = useState("");
     const [error, setError] = useState<string | null>(null);
-
+    const navigate = useNavigate()
     async function handleSearch(search: string) {
         setError(null);
 
@@ -127,7 +128,7 @@ export default function Vocabulary() {
 
         // API responded but returned no entries
         if (!data.entries.length) {
-            const lower_word=search.toLowerCase() //edge case Full captial
+            const lower_word = search.toLowerCase() //edge case Full captial
 
             const firstLetter = lower_word[0].toUpperCase(); //edge case First letter small
             const newWord = lower_word.replace(lower_word[0], firstLetter);
@@ -156,20 +157,111 @@ export default function Vocabulary() {
     }
 
     return (
-        <div>
-            <h1>Welcome back</h1>
+        <main className="grammar-page">
+            <div className="grammar-container">
 
-            <input
-                value={word}
-                onChange={(e) => setWord(e.target.value)}
-            />
+                <button
+                    className="grammar-back-button"
+                    onClick={() => navigate("/dashboard")}
+                >
+                    ← Back to Dashboard
+                </button>
 
-            <button onClick={() => handleSearch(word)}>
-                Add a new word
-            </button>
+                <header className="grammar-header">
+                    <h1>Grammar Practice</h1>
+                    <p>Practice German grammar your way.</p>
+                </header>
 
-            {error && <p>{error}</p>}
-        </div>
+                <section className="grammar-options">
+
+                    {/* Custom AI Practice */}
+
+                    <article className="grammar-card">
+                        <div className="grammar-card-header">
+                            <div className="grammar-card-icon">
+                                ✨
+                            </div>
+
+                            <div className="grammar-sandbox">
+
+                                <div
+                                    className={`grammar-input-wrapper`}
+                                >
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. Akkusativ, Wechselpräpositionen, Passiv..."
+                                        className="grammar-topic-input"
+                                        value={word}
+                                        onChange={(e) => setWord(e.target.value)}
+                                    />
+
+                                    <button
+                                        type="submit"
+                                        onClick={() => handleSearch(word)}
+                                        className="grammar-generate-button"
+                                    >
+                                        "Generate Quiz →
+                                    </button>
+                                </div>
+
+
+                                <div className="grammar-suggestions">
+
+
+
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </article>
+
+                    {/* Random Practice */}
+
+                    <article className="grammar-card">
+                        <div className="grammar-card-header">
+                            <div className="grammar-card-icon">
+                                🎲
+                            </div>
+
+                            <div>
+                                <h2>Random Grammar Practice</h2>
+
+                                <p>
+                                    Not sure what to practice? Get a random selection
+                                    of grammar questions from your existing collection.
+                                </p>
+                            </div>
+                        </div>
+
+                        <button
+                            className="grammar-action-button"
+                        >
+                            Start Random Quiz →
+                        </button>
+                    </article>
+
+                </section>
+
+            </div>
+            <div>
+
+
+
+
+                {error && <p>{error}</p>}
+            </div>
+        </main>
+
     );
 }
 
+{/* <input
+value={word}
+onChange={(e) => setWord(e.target.value)}
+/>
+
+<button onClick={() => handleSearch(word)}>
+Add a new word
+</button> */}

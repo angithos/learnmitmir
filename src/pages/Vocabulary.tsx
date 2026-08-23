@@ -1,6 +1,9 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { db, auth } from "../firebase/firebaseconfig";
+import { addDoc, collection} from "firebase/firestore";
+import { convertQuestions, fetchVocabulary } from "../utils/fetchQuestions";
 
 
 type Gender = "der" | "die" | "das";
@@ -19,7 +22,8 @@ interface Sense {
     tags: string[];
 }
 
-interface VocabularyWord {
+export interface VocabularyWord {
+    id?: string;
     word: string;
     gender?: Gender;
     partofspeech?: string;
@@ -33,9 +37,12 @@ interface VocabData {
 }
 
 export default function Vocabulary() {
+
     const [word, setWord] = useState("");
     const [error, setError] = useState<string | null>(null);
+    const [vocabulary, setVocabulary] = useState<VocabularyWord[]>([]);
     const navigate = useNavigate()
+
     async function handleSearch(search: string) {
         setError(null);
 
@@ -151,10 +158,61 @@ export default function Vocabulary() {
             return;
         }
 
-        const vocabulary = createVocabulary(vocabData, search);
+        const vocabularyWord = createVocabulary(vocabData, search);
 
-        console.log(vocabulary);
+        await saveVocabulary(vocabularyWord)
+
+        console.log(vocabularyWord);
     }
+    async function saveVocabulary(vocabulary: VocabularyWord) {
+        const user = auth.currentUser;
+
+        if (user == null) {
+            return;
+        }
+
+        try {
+            const vocabRef = collection(
+                db,
+                "users",
+                user.uid,
+                "vocabulary"
+            );
+            console.log("document created")
+            await addDoc(vocabRef, vocabulary);
+        } catch (error) {
+            console.error("Failed to save vocabulary:", error);
+        }
+    }
+    async function callFetchVocabFunction(): Promise<void> {
+        try {
+            const vocabdata = await fetchVocabulary();
+    
+            if (vocabdata === null) {
+                console.log("Could not fetch vocabulary.");
+                return;
+            }
+    
+            setVocabulary(vocabdata);
+    
+            const convertedQuestions = convertQuestions(vocabdata);
+    
+            if (convertedQuestions.length === 0) {
+                alert("No vocabulary words available for this quiz.");
+                return;
+            }
+    
+            navigate("/question_renderer", {
+                state: { customQuestions: convertedQuestions },
+            });
+    
+        } catch (error) {
+            console.error("Failed to fetch Vocab Questions", error);
+        }
+    }
+    
+
+  
 
     return (
         <main className="grammar-page">
@@ -237,6 +295,7 @@ export default function Vocabulary() {
 
                         <button
                             className="grammar-action-button"
+                            onClick={()=>callFetchVocabFunction()}
                         >
                             Start Random Quiz →
                         </button>

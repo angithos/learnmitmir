@@ -3,6 +3,7 @@ import { db, auth } from "../firebase/firebaseconfig";
 import { MOCK_QUESTIONS } from "../pages/mockdata";
 import { Question } from "../types/Question";
 import { SM2State } from "./sm2"; // Or wherever your SM2State interface lives
+import { VocabularyWord } from "../pages/Vocabulary";
 
 // We create a new type that holds the question data AND its current SM2 history
 export interface ReviewQuestion extends Question {
@@ -96,4 +97,81 @@ export async function fetchQuizQuestions(): Promise<Question[] | null> {
   });
   console.log(questions)
   return questions.slice(0, 10);
+}
+export async function fetchVocabulary(): Promise<VocabularyWord[] | null> {
+  const user = auth.currentUser;
+
+  if (user == null) {
+      return null;
+  }
+
+  try {
+      const vocabRef = collection(
+          db,
+          "users",
+          user.uid,
+          "vocabulary"
+      );
+
+      const querySnapshot = await getDocs(vocabRef);
+
+      const vocabdata: VocabularyWord[] = [];
+
+      querySnapshot.forEach((docSnap) => {
+        const vocabularyData = {
+          id: docSnap.id,
+          ...docSnap.data()
+      } as VocabularyWord;
+          vocabdata.push(vocabularyData);
+      });
+
+      return vocabdata;
+
+  } catch (error) {
+      console.error("Failed to fetch vocabulary", error);
+      return null;
+  }
+}
+
+export function convertQuestions(
+  questions: VocabularyWord[]
+): Question[] {
+
+  return questions
+      .filter((vocabQuestion) => vocabQuestion.gender !== undefined)
+      .map((vocabQuestion) => {
+
+          const answer = vocabQuestion.gender!;
+          const q_id = vocabQuestion.id!;
+          const word = vocabQuestion.word;
+
+          const prompt = `What's the article for ${word}`;
+
+          let explanation: string;
+
+          if (answer === "der") {
+              explanation = `${word} is a masculine word`;
+          } 
+          else if (answer === "die") {
+              explanation = `${word} is a feminine word`;
+          } 
+          else {
+              explanation = `${word} is a neuter word`;
+          }
+
+          const question: Question = {
+              id: q_id,
+              topic: "vocabulary",
+              subtopic: "article",
+              conceptId: "vocabulary_article",
+              type: "mcq",
+              prompt: prompt,
+              answer: answer,
+              options: ["der", "die", "das"],
+              explanation: explanation,
+              createdAt: Timestamp.now()
+          };
+
+          return question;
+      });
 }

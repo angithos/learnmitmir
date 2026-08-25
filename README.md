@@ -97,14 +97,14 @@ QuestionRenderer
 ```
  ## 🛠️ Tech Stack
 Frontend
-  React
-  TypeScript
-  React Router
+  - React
+  - TypeScript
+  - React Router
 Backend / Services
-  Firebase Authentication
-  Firebase Firestore
-  Vercel API routes
-  OpenAI API
-  Free Dictionary API
+  - Firebase Authentication
+  - Firebase Firestore
+  - Vercel API routes
+  - OpenAI API
+  - Free Dictionary API
 Learning System
-  SM-2 spaced repetition algorithm
+  - SM-2 spaced repetition algorithm

@@ -226,8 +226,8 @@ export default function Vocabulary() {
                 </button>
 
                 <header className="grammar-header">
-                    <h1>Grammar Practice</h1>
-                    <p>Practice German grammar your way.</p>
+                    <h1>Practice German Vocabulary</h1>
+                    <p>Add new words or practice existing vocabulary </p>
                 </header>
 
                 <section className="grammar-options">
@@ -247,7 +247,7 @@ export default function Vocabulary() {
                                 >
                                     <input
                                         type="text"
-                                        placeholder="e.g. Akkusativ, Wechselpräpositionen, Passiv..."
+                                        placeholder="Enter any german word"
                                         className="grammar-topic-input"
                                         value={word}
                                         onChange={(e) => setWord(e.target.value)}
@@ -258,7 +258,7 @@ export default function Vocabulary() {
                                         onClick={() => handleSearch(word)}
                                         className="grammar-generate-button"
                                     >
-                                        "Generate Quiz →
+                                        "Add Vocabulary →
                                     </button>
                                 </div>
 

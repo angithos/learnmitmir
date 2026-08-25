@@ -1,88 +1,110 @@
 # learnmitmir 🇩🇪
 
-An AI-assisted German language learning application built to make learning German more personalized and effective.
+An AI-assisted German language learning application built with React and TypeScript.
 
-The application combines vocabulary learning, grammar practice, AI-generated exercises, and spaced repetition to help learners focus on the areas they struggle with most.
+learnmitmir was created as a personal project to help me improve my German vocabulary and grammar, particularly German noun articles, while also giving me practical experience building a full-stack web application.
 
-## 🚀 Features
-
-### 📚 Vocabulary Learning
-- Add German vocabulary words to a personal vocabulary collection.
-- Retrieve word information from a German dictionary API.
-- Identify grammatical gender (`der`, `die`, `das`).
-- Detect plural forms.
-- Store definitions and parts of speech.
-- Designed for personalized vocabulary-based training.
-
-### 📝 Grammar Practice
-- Practice German grammar through interactive exercises.
-- Grammar exercises are organized by topics and subtopics.
-- Supports different question types, including:
-  - Multiple choice
-  - Fill in the blank
-  - Typing exercises
-- Includes explanations to help learners understand their mistakes.
-
-### 🤖 AI-Assisted Learning
-- Uses the OpenAI API to generate German learning content.
-- AI-generated exercises can target specific grammar topics.
-- Designed to provide additional practice based on the learner's needs.
-
-### 🔄 Spaced Repetition
-- Uses an SM-2 based spaced-repetition system.
-- Tracks:
-  - Repetitions
-  - Ease factor
-  - Review interval
-  - Next review date
-- Questions can be presented again when they become due for review.
-
-### 🔥 Firebase Integration
-- Firebase Authentication for user accounts.
-- Cloud Firestore for storing:
-  - User vocabulary
-  - Grammar questions
-  - Learning progress
-  - Spaced-repetition data
-
-Each user's learning data is stored separately, allowing the application to provide personalized learning.
+The application combines Firebase, dictionary data, AI-generated exercises, and spaced repetition to create a personalized learning experience.
 
 ---
 
-## 🛠️ Tech Stack
+## 📸 Screenshots
 
-### Frontend
-- React
-- TypeScript
-- JavaScript
-- CSS
+### Dashboard
 
-### Backend / Services
-- Firebase Authentication
-- Firebase Firestore
-- OpenAI API
-- Vercel Serverless Functions
+The dashboard provides access to grammar practice, vocabulary learning, and review sessions.
 
-### Learning / NLP
-- Spaced Repetition (SM-2)
-- AI-generated language exercises
-- German NLP / dictionary data
+![Dashboard](screenshots/Dashboard.png)
 
 ---
-💻 Running Locally
 
-Clone the repository:
+### Grammar Quiz
 
-git clone https://github.com/angithos/learnmitmir.git
+Grammar exercises can be generated and practiced through the quiz interface.
 
-cd learnmitmir
+![Grammar Quiz](screenshots/GrammarPage.png)
 
-Install dependencies:
+---
 
-npm install
+### Vocabulary
 
-Create your environment configuration and add the required Firebase/API credentials.
+Vocabulary words can be searched and saved for later practice. Dictionary information such as the article, part of speech, and definition is retrieved automatically.
 
-Then start the development server:
+![Vocabulary](screenshots/VocabularyPage.png)
 
-npm run dev
+---
+
+### Spaced Repetition Review
+
+The application uses an SM-2 based spaced repetition system to schedule questions for review.
+
+![Review](screenshots/QuizRenderer.png)
+
+---
+
+## ✨ Features
+
+- German grammar practice
+- AI-assisted exercise generation
+- German vocabulary lookup
+- Automatic noun article detection
+- Vocabulary persistence using Firebase Firestore
+- Interactive vocabulary article quizzes
+- User authentication
+- Spaced repetition using the SM-2 algorithm
+- Personalized review scheduling
+- Multiple question formats
+- React-based interactive UI
+
+---
+
+## 🧠 How It Works
+
+The application separates learning content from the presentation and review systems.
+
+### Grammar Questions
+
+```text
+Question data
+     ↓
+Firestore
+     ↓
+Question retrieval
+     ↓
+QuestionRenderer
+     ↓
+User answer
+     ↓
+SM-2 review calculation
+     ↓
+Next review date
+```
+## Vocabulary 
+```text
+German word
+     ↓
+Dictionary API
+     ↓
+Article / POS / Definition
+     ↓
+VocabularyWord
+     ↓
+Firestore
+     ↓
+Vocabulary → Question conversion
+     ↓
+QuestionRenderer
+```
+ ## 🛠️ Tech Stack
+Frontend
+  React
+  TypeScript
+  React Router
+Backend / Services
+  Firebase Authentication
+  Firebase Firestore
+  Vercel API routes
+  OpenAI API
+  Free Dictionary API
+Learning System
+  SM-2 spaced repetition algorithm

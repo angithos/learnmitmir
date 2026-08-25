@@ -6,6 +6,7 @@ import "../styles/Dashboard.css";
 
 export default function Dashboard() {
   const user = auth.currentUser;
+
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
@@ -41,7 +42,7 @@ export default function Dashboard() {
 
         <header className="dashboard-header">
           <h1 className="dashboard-title">
-            Guten Morgen, {user?.displayName || "Angith"} 👋
+            Guten Morgen, {user?.email || "User"} 👋
           </h1>
 
           <p className="dashboard-subtitle">
